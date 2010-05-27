@@ -31,7 +31,15 @@
      <cfset context = { name = 'Jon'} />
      <cfset result = stache.render(template, context)/>
      <cfset assertEquals("I think Jon wants a , right Jon?", result) />
+  </cffunction>           
+  
+  <cffunction name="test_render_zero">
+    <cfset template = "My value is {{value}}." /> 
+    <cfset context = { value = 0 } />  
+    <cfset result = stache.render(template, context)/>
+    <cfset assertEquals("My value is 0.", result) />
   </cffunction>
+                      
 
   
 </cfcomponent>
