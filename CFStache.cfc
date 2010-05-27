@@ -13,15 +13,23 @@
     <cfloop condition = "arraylen(matches) gt 0" >
       <cfset tag = matches[1]/>
       <cfset tagName = matches[2] />
-      <cfset template = replace(template, tag, context[tagName])/>
+      <cfset template = replace(template, tag, get(tagName, context))/>
       <cfset matches = reFindNoCaseValues("{{(\w+)}}", template) />    
     </cfloop>
     <cfreturn template/>
   </cffunction>                                               
                                                   
+  <cffunction name="get">
+    <cfargument name="key" />
+    <cfargument name="context" />   
+    <cfif structKeyExists(context, key) >
+      <cfreturn context[key] /> 
+    <cfelse>
+      <cfreturn "" />
+    </cfif>
+  </cffunction>
 
-
-  <cffunction name="reFindNoCaseValues"> 
+  <cffunction name="reFindNoCaseValues" access="private"> 
     <cfargument name="re" /> 
     <cfargument name="s"/> 
     <cfargument name="start" default="1" />

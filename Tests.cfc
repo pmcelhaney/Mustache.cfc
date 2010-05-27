@@ -5,22 +5,33 @@
     
   </cffunction>
   
-  <cffunction name="basic">
+  <cffunction name="basic">     
+    <cfset template = "Hello, {{thing}}!" />
     <cfset context = { thing = 'world'} />
-    <cfset result = stache.render("Hello, {{thing}}!", context)/>
+    <cfset result = stache.render(template, context)/>
     <cfset assertEquals("Hello, World!", result) />
   </cffunction>      
   
-  <cffunction name="less_basic">
+  <cffunction name="less_basic">   
+    <cfset template = "It's a nice day for {{beverage}}, right {{person}}?" />
     <cfset context = { beverage = 'soda', person = 'Bob' } />
-    <cfset result = stache.render("It's a nice day for {{beverage}}, right {{person}}?", context)/>
+    <cfset result = stache.render(template, context)/>
     <cfset assertEquals("It's a nice day for soda, right Bob?", result) />
   </cffunction>        
   
-  <cffunction name="even_less_basic"> 
+  <cffunction name="even_less_basic">      
+     <cfset template = "I think {{name}} wants a {{thing}}, right {{name}}?">
      <cfset context = { name = 'Jon', thing = 'racecar'} />
-     <cfset result = stache.render("I think {{name}} wants a {{thing}}, right {{name}}?", context)/>
+     <cfset result = stache.render(template, context)/>
      <cfset assertEquals("I think Jon wants a racecar, right Jon?", result) />
+  </cffunction>         
+  
+  <cffunction name="ignores_misses">      
+     <cfset template = "I think {{name}} wants a {{thing}}, right {{name}}?">
+     <cfset context = { name = 'Jon'} />
+     <cfset result = stache.render(template, context)/>
+     <cfset assertEquals("I think Jon wants a , right Jon?", result) />
   </cffunction>
+
   
 </cfcomponent>
