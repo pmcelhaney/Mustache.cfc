@@ -1,5 +1,6 @@
 <cfcomponent> 
-  <cffunction name="init">
+  <cffunction name="init">    
+    <cfset variables.context = {} />
     <cfreturn this />
     
   </cffunction>
@@ -9,11 +10,12 @@
     <cfargument name="context" />   
     <cfset var tag = ""/>
     <cfset var tagName = ""/> 
-    <cfset var matches = reFindNoCaseValues("{{(\w+)}}", template) />
+    <cfset var matches = reFindNoCaseValues("{{(\w+)}}", template) />       
+    <cfset variables.context = arguments.context />
     <cfloop condition = "arraylen(matches) gt 0" >
       <cfset tag = matches[1]/>
       <cfset tagName = matches[2] />
-      <cfset template = replace(template, tag, get(tagName, context))/>
+      <cfset template = replace(template, tag, get(tagName))/>
       <cfset matches = reFindNoCaseValues("{{(\w+)}}", template) />    
     </cfloop>
     <cfreturn template/>
@@ -21,7 +23,6 @@
                                                   
   <cffunction name="get">
     <cfargument name="key" />
-    <cfargument name="context" />   
     <cfif structKeyExists(context, key) >
       <cfreturn context[key] /> 
     <cfelse>
