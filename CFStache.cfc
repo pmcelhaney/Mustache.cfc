@@ -19,12 +19,11 @@
     <cfset var tagName = ""/>                    
     <cfset var type = "" />
     <cfset var inner = "" />
-    <cfset var re = "\{\{(##)(\w+)}}(.*?)\{\{/\2\}\}" />       
     <cfset var matches = arrayNew(1)  /> 
      
     <cfset variables.context = arguments.context />   
     <cfloop condition = "true" >    
-      <cfset matches = ReFindNoCaseValues(template, re)>
+      <cfset matches = ReFindNoCaseValues(template, "\{\{(##)(\w+)}}(.*?)\{\{/\2\}\}")>
       <cfif arrayLen(matches) eq 0>
         <cfbreak>
       </cfif>
@@ -42,12 +41,11 @@
     <cfargument name="context" />
     <cfset var tag = ""/>
     <cfset var tagName = ""/>     
-    <cfset var re = "\{\{(!)?(\w+)\}\}" />                     
     <cfset var matches = arrayNew(1) />
     
     <cfset variables.context = arguments.context />
     <cfloop condition = "true" >    
-      <cfset matches = ReFindNoCaseValues(template, re) />   
+      <cfset matches = ReFindNoCaseValues(template, "\{\{(!)?(\w+)\}\}") />   
       <cfif arrayLen(matches) eq 0>
         <cfbreak>
       </cfif>
@@ -81,11 +79,8 @@
   <cffunction
   	name="ReFindNoCaseValues"
   	access="private"
-  	returntype="array"
-  	output="false"
-  	hint="Returns the captrued groups for each pattern match.">
-    <!--- Based on Ben Nadel's code http://bennadel.com/blog/1040-REMatchGroups-ColdFusion-User-Defined-Function.htm --->
-  	<cfargument name="Text"/>
+  	output="false">
+  	<cfargument name="text"/>
   	<cfargument name="re"/>
     <cfset var results = arrayNew(1) />           
     <cfset var pattern = CreateObject("java","java.util.regex.Pattern").compile(arguments.re) />
