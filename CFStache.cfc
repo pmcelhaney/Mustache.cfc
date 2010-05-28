@@ -22,7 +22,7 @@
     <cfset var matches = arrayNew(1)  /> 
 
     <cfloop condition = "true" >    
-      <cfset matches = ReFindNoCaseValues(template, "\{\{(##)\s*(\w+)\s*}}(.*?)\{\{/\s*\2\s*\}\}")>
+      <cfset matches = ReFindNoCaseValues(template, "\{\{(##|\^)\s*(\w+)\s*}}(.*?)\{\{/\s*\2\s*\}\}")>
       <cfif arrayLen(matches) eq 0>
         <cfbreak>
       </cfif>
@@ -30,13 +30,14 @@
       <cfset type = matches[2] />
       <cfset tagName = matches[3] />   
       <cfset inner = matches[4] />
-      <cfset template = replace(template, tag, renderSection(tagName, inner, context))/>
+      <cfset template = replace(template, tag, renderSection(tagName, type, inner, context))/>
     </cfloop>
     <cfreturn template/>   
   </cffunction>                                                             
   
   <cffunction name="renderSection">      
-    <cfargument name="tagName"/>
+    <cfargument name="tagName"/>   
+    <cfargument name="type"/>
     <cfargument name="inner"/>           
     <cfargument name="context" />
     <cfset var ctx = get(tagName, context) /> 
@@ -48,7 +49,7 @@
         <cfset result &= render(inner, ctx) /> <!--- should probably use StringBuilder for performance --->
       </cfloop>
       <cfreturn result/>
-    <cfelseif ctx>
+    <cfelseif ctx xor type eq "^">
       <cfreturn inner />
     <cfelse>
       <cfreturn "" />

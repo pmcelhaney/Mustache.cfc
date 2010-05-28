@@ -60,7 +60,19 @@
     <cfset template = "Ready {{##set}}set {{/set}}go!" />
     <cfset context =  { set = true }  />     
     <cfset expected = "Ready set go!" />
-  </cffunction>    
+  </cffunction>      
+  
+  <cffunction name="falseSectionsAreShownIfInverted">
+    <cfset template = "Ready {{^set}}set {{/set}}go!" />
+    <cfset context =  { set = false }  />     
+    <cfset expected = "Ready set go!" />
+  </cffunction>       
+   
+   <cffunction name="trueSectionsAreHiddenIfInverted">
+    <cfset template = "Ready {{^set}}set {{/set}}go!" />
+    <cfset context =  { set = true }  />     
+    <cfset expected = "Ready go!" />
+  </cffunction>
   
   <cffunction name="structAsSection">
     <cfset context = {
@@ -112,6 +124,9 @@
     <cfset template = "Ready {{##  set  }}set {{/  set  }}go!" />
     <cfset context =  { set = true }  />     
     <cfset expected = "Ready set go!" />
-  </cffunction>
+  </cffunction>    
+  
+  
+  
   
 </cfcomponent>
