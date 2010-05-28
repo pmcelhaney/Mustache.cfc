@@ -31,10 +31,20 @@
       <cfset type = matches[2] />
       <cfset tagName = matches[3] />   
       <cfset inner = matches[4] />
-      <cfset template = replace(template, tag, "")/>
+      <cfset template = replace(template, tag, renderTemplate(tagName, inner))/>
     </cfloop>
     <cfreturn template/>   
-  </cffunction>
+  </cffunction>                                                             
+  
+  <cffunction name="renderTemplate">      
+    <cfargument name="tagName"/>
+    <cfargument name="inner"/>
+    <cfif get(tagName)>
+      <cfreturn inner />
+    <cfelse>
+      <cfreturn "" />
+    </cfif>
+  </cffunction>  
    
   <cffunction name="renderTags">
     <cfargument name="template"/>

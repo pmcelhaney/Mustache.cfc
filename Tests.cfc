@@ -56,7 +56,11 @@
     <cfset expected = "Ready go!" />
   </cffunction>       
    
- 
+   <cffunction name="trueSectionsAreShown">
+    <cfset template = "Ready {{##set}}set {{/set}}go!" />
+    <cfset context =  { set = true }  />     
+    <cfset expected = "Ready set go!" />
+  </cffunction>
                             
                       
 
