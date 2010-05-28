@@ -83,38 +83,14 @@
     <cfset expected = "(Jenny's number is 867-5309)(Tom's number is 555-1234)" />
   </cffunction>   
                       
-
+  <cffunction name="escape">
+    <cfset template = "Hello, {{thing}}!" />
+    <cfset context = { thing = '<b>world</b>'} />   
+    <cfset expected = "Hello, &lt;b&gt;world&lt;/b&gt;!" />
+  </cffunction>
 
                                         
-                      
-  <cffunction
-  	name="REMatchGroups"
-  	access="private"
-  	returntype="array"
-  	output="false"
-  	hint="Returns the captrued groups for each pattern match.">
-    <!--- Based on Ben Nadel's code http://bennadel.com/blog/1040-REMatchGroups-ColdFusion-User-Defined-Function.htm --->
-
-  	<cfargument name="Text"/>
-
-  	<cfargument name="re"/>
-    
-    <cfset var results = arrayNew(1) />           
-    <cfset var pattern = CreateObject("java","java.util.regex.Pattern").compile(arguments.re) />
-    <cfset var matcher = pattern.matcher(arguments.text)/>
-    <cfset var i = 0 />
-
-    <cfset matcher.Find()>       
-  
-    <cfset debug(matcher.matches()) />              
-  
-    <cfloop index="i" from="0" to="#matcher.groupCount()#">       
-    
-      <cfset arrayAppend(results, matcher.group(i)) />  
-    </cfloop>  
-                    
-  	<cfreturn results />
-  </cffunction>                    
+                 
 
   
 </cfcomponent>

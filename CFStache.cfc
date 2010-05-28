@@ -81,8 +81,8 @@
     <cfargument name="context" />  
     <cfif type eq "!">
       <cfreturn "" />
-    <cfelse>
-      <cfreturn get(tagName, context) & type />
+    <cfelse>  
+      <cfreturn htmlEditFormat(get(tagName, context)) />
     </cfif>
   </cffunction>                      
                                                   
