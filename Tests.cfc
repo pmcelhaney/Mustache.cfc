@@ -89,7 +89,11 @@
     <cfset expected = "Hello, &lt;b&gt;world&lt;/b&gt;!" />
   </cffunction>
 
-                                        
+  <cffunction name="dontEscape">
+    <cfset template = "Hello, {{{thing}}}!" />
+    <cfset context = { thing = '<b>world</b>'} />   
+    <cfset expected = "Hello, <b>world</b>!" />
+  </cffunction>                                      
                  
 
   

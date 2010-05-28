@@ -63,7 +63,7 @@
     <cfset var matches = arrayNew(1) />
     
     <cfloop condition = "true" >    
-      <cfset matches = ReFindNoCaseValues(template, "\{\{(!)?(\w+)\}\}") />   
+      <cfset matches = ReFindNoCaseValues(template, "\{\{(!|\{)?(\w+)\}?\}\}") />   
       <cfif arrayLen(matches) eq 0>
         <cfbreak>
       </cfif>
@@ -81,7 +81,9 @@
     <cfargument name="context" />  
     <cfif type eq "!">
       <cfreturn "" />
-    <cfelse>  
+    <cfelseif type eq "{"> 
+      <cfreturn get(tagName, context) />
+    <cfelse> 
       <cfreturn htmlEditFormat(get(tagName, context)) />
     </cfif>
   </cffunction>                      
