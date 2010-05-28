@@ -2,12 +2,13 @@
                   
   <cffunction name="setup">
     <cfset stache = createObject("component", "CFStache").init()/>
-    
   </cffunction>
                  
   
   <cffunction name="tearDown">
+    <!--- <cfset debug(stache.reFindNoCaseValues("\{\{(!)?(\w+)\}\}", template))/>        --->
     <cfset assertEquals(expected, stache.render(template, context)) />
+ 
   </cffunction>
   
   <cffunction name="basic">     
@@ -34,12 +35,97 @@
      <cfset expected = "I think Jon wants a , right Jon?" />
   </cffunction>           
   
-  <cffunction name="test_render_zero">
+  <cffunction name="render_zero">
     <cfset template = "My value is {{value}}." /> 
     <cfset context = { value = 0 } />  
     <cfset expected = "My value is 0." />
+  </cffunction>         
+  
+                    
+  <cffunction name="comments">
+    <cfset template = "What {{!the}} what?" /> 
+    <cfset context = structNew() />
+    <cfset context['!'] = "FAIL" />                   
+    <cfset context['the'] = "FAIL" />  
+    <cfset expected = "What  what?" />    
   </cffunction>
                       
+  <cffunction name="falseSectionsAreHidden">
+    <cfset template = "Ready {{##set}}set {{/set}}go!" />
+    <cfset context =  { set = false }  />     
+    <cfset expected = "Ready go!" />
+  </cffunction>       
+   
+  <cffunction name="reMatchGroupsTest"> 
+    <cfset template = "" />
+    <cfset expected = "" />     
+    
+    <cfset expectMatches = [ "{{tag}} {{tag}}", "tag", "tag" ] />
+    <cfset assertEquals(expectMatches, reMatchGroups("{{tag}} {{tag}}", "\{\{(tag)\}\} \{\{(\1)\}\}", "ONE")) />
+    
+  </cffunction>
+  
+  <cffunction name="reMatchGroupsTest2"> 
+    <cfset template = "" />
+    <cfset expected = "" />     
+    
+    <cfset expectMatches = [ "{{tag}} {{tag}}", "null", "tag", "tag" ] />
+    <cfset assertEquals(expectMatches, reMatchGroups("{{tag}} {{tag}}", "\{\{(!)?(tag)\}\} \{\{(\2)\}\}", "ONE")) />
+    
+  </cffunction>
+  
+  
+  <cffunction name="reMatchGroupsTest3"> 
+    <cfset template = "" />
+    <cfset expected = "" />     
+    
+    <cfset expectMatches = [ "Hello, {{tag}} and {{person}}!", "null", "tag"] />
+    <cfset assertEquals(expectMatches, reMatchGroups("Hello, {{tag}} and {{person}}!", ".*?\{\{(!)?(\w+)\}\}.*", "ONE")) />
+    
+  </cffunction>       
+  
+  <cffunction name="reMatchGroupsTest4"> 
+    <cfset template = "" />
+    <cfset expected = "" />     
+    
+    <cfset expectMatches = [ "Ready {{##set}}set{{/set}}go!", "##", "set", "set"] />
+    <cfset assertEquals(expectMatches, reMatchGroups("Ready {{##set}}set{{/set}}go!", ".*?\{\{(##)(\w+)}}(.*?)\{\{/\w+\}\}.*", "ONE")) />
+    
+  </cffunction>
+                            
+                      
+
+
+                                        
+                      
+  <cffunction
+  	name="REMatchGroups"
+  	access="private"
+  	returntype="array"
+  	output="false"
+  	hint="Returns the captrued groups for each pattern match.">
+    <!--- Based on Ben Nadel's code http://bennadel.com/blog/1040-REMatchGroups-ColdFusion-User-Defined-Function.htm --->
+
+  	<cfargument name="Text"/>
+
+  	<cfargument name="re"/>
+    
+    <cfset var results = arrayNew(1) />           
+    <cfset var pattern = CreateObject("java","java.util.regex.Pattern").compile(arguments.re) />
+    <cfset var matcher = pattern.matcher(arguments.text)/>
+    <cfset var i = 0 />
+
+    <cfset matcher.Find()>       
+  
+    <cfset debug(matcher.matches()) />              
+  
+    <cfloop index="i" from="0" to="#matcher.groupCount()#">       
+    
+      <cfset arrayAppend(results, matcher.group(i)) />  
+    </cfloop>  
+                    
+  	<cfreturn results />
+  </cffunction>                    
 
   
 </cfcomponent>
