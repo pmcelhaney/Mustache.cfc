@@ -19,14 +19,14 @@
     <cfset var tagName = ""/>                    
     <cfset var type = "" />
     <cfset var inner = "" />
-    <cfset var re = ".*?(\{\{(##)(\w+)}}(.*?)\{\{/\3\}\}).*" />       
+    <cfset var re = "\{\{(##)(\w+)}}(.*?)\{\{/\2\}\}" />       
     <cfset  matches = ReFindNoCaseValues(template, re) />  
     <cfset variables.context = arguments.context />   
-    <cfloop condition = "arraylen(matches) eq 5" >
-      <cfset tag = matches[2]/>   
-      <cfset type = matches[3] />
-      <cfset tagName = matches[4] />   
-      <cfset inner = matches[5] />
+    <cfloop condition = "arraylen(matches) eq 4" >
+      <cfset tag = matches[1]/>   
+      <cfset type = matches[2] />
+      <cfset tagName = matches[3] />   
+      <cfset inner = matches[4] />
       <cfset template = replace(template, tag, "")/>
       <cfset matches = ReFindNoCaseValues(template, re) />   
 
@@ -39,14 +39,14 @@
     <cfargument name="context" />
     <cfset var tag = ""/>
     <cfset var tagName = ""/>     
-    <cfset var re = ".*?(\{\{(!)?(\w+)\}\}).*" />                     
+    <cfset var re = "\{\{(!)?(\w+)\}\}" />                     
     <cfset var matches = ReFindNoCaseValues(template, re) />
       
     <cfset variables.context = arguments.context />
-    <cfloop condition = "arraylen(matches) eq 4" >
-      <cfset tag = matches[2]/>   
-      <cfset type = matches[3] />
-      <cfset tagName = matches[4] />  
+    <cfloop condition = "arraylen(matches) eq 3" >
+      <cfset tag = matches[1]/>   
+      <cfset type = matches[2] />
+      <cfset tagName = matches[3] />  
       <cfset template = replace(template, tag, renderTag(type, tagName))/>  
       <cfset matches = ReFindNoCaseValues(template, re) />    
     </cfloop>
