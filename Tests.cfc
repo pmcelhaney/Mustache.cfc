@@ -95,6 +95,10 @@
     <cfset expected = "Hello, <b>world</b>!" />
   </cffunction>                                      
                  
-
+  <cffunction name="dontEscapeWithAmpersand">
+    <cfset template = "Hello, {{&thing}}!" />
+    <cfset context = { thing = '<b>world</b>'} />   
+    <cfset expected = "Hello, <b>world</b>!" />
+  </cffunction>
   
 </cfcomponent>
