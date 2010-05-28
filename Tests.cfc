@@ -60,8 +60,17 @@
     <cfset template = "Ready {{##set}}set {{/set}}go!" />
     <cfset context =  { set = true }  />     
     <cfset expected = "Ready set go!" />
-  </cffunction>
-                            
+  </cffunction>    
+  
+  <cffunction name="structAsSection">
+    <cfset context = {
+      contact = { name = 'Jenny', phone = '867-5309'}
+    } />
+    <cfset template = "{{##contact}}({{name}}'s number is {{phone}}){{/contact}}">
+    <cfset expected = "(Jenny's number is 867-5309)" />
+     
+    
+  </cffunction>        
                       
 
 

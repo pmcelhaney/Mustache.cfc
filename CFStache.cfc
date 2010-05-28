@@ -31,15 +31,18 @@
       <cfset type = matches[2] />
       <cfset tagName = matches[3] />   
       <cfset inner = matches[4] />
-      <cfset template = replace(template, tag, renderTemplate(tagName, inner))/>
+      <cfset template = replace(template, tag, renderSection(tagName, inner))/>
     </cfloop>
     <cfreturn template/>   
   </cffunction>                                                             
   
-  <cffunction name="renderTemplate">      
+  <cffunction name="renderSection">      
     <cfargument name="tagName"/>
     <cfargument name="inner"/>
-    <cfif get(tagName)>
+    <cfset var ctx = get(tagName) />
+    <cfif isStruct(ctx)>
+      <cfreturn render(inner, ctx)>
+    <cfelseif ctx>
       <cfreturn inner />
     <cfelse>
       <cfreturn "" />
