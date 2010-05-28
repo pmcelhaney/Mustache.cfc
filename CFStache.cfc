@@ -7,7 +7,8 @@
    
   <cffunction name="render">
     <cfargument name="template"/>
-    <cfargument name="context" />           
+    <cfargument name="context" />                     
+    <cfset variables.context = arguments.context />    
     <cfset template = renderSections(template, context) />  
     <cfreturn renderTags(template, context)/>
   </cffunction>                         
@@ -20,8 +21,7 @@
     <cfset var type = "" />
     <cfset var inner = "" />
     <cfset var matches = arrayNew(1)  /> 
-     
-    <cfset variables.context = arguments.context />   
+
     <cfloop condition = "true" >    
       <cfset matches = ReFindNoCaseValues(template, "\{\{(##)(\w+)}}(.*?)\{\{/\2\}\}")>
       <cfif arrayLen(matches) eq 0>
@@ -43,7 +43,6 @@
     <cfset var tagName = ""/>     
     <cfset var matches = arrayNew(1) />
     
-    <cfset variables.context = arguments.context />
     <cfloop condition = "true" >    
       <cfset matches = ReFindNoCaseValues(template, "\{\{(!)?(\w+)\}\}") />   
       <cfif arrayLen(matches) eq 0>
