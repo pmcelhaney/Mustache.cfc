@@ -56,42 +56,7 @@
     <cfset expected = "Ready go!" />
   </cffunction>       
    
-  <cffunction name="reMatchGroupsTest"> 
-    <cfset template = "" />
-    <cfset expected = "" />     
-    
-    <cfset expectMatches = [ "{{tag}} {{tag}}", "tag", "tag" ] />
-    <cfset assertEquals(expectMatches, reMatchGroups("{{tag}} {{tag}}", "\{\{(tag)\}\} \{\{(\1)\}\}", "ONE")) />
-    
-  </cffunction>
-  
-  <cffunction name="reMatchGroupsTest2"> 
-    <cfset template = "" />
-    <cfset expected = "" />     
-    
-    <cfset expectMatches = [ "{{tag}} {{tag}}", "null", "tag", "tag" ] />
-    <cfset assertEquals(expectMatches, reMatchGroups("{{tag}} {{tag}}", "\{\{(!)?(tag)\}\} \{\{(\2)\}\}", "ONE")) />
-    
-  </cffunction>
-  
-  
-  <cffunction name="reMatchGroupsTest3"> 
-    <cfset template = "" />
-    <cfset expected = "" />     
-    
-    <cfset expectMatches = [ "Hello, {{tag}} and {{person}}!", "null", "tag"] />
-    <cfset assertEquals(expectMatches, reMatchGroups("Hello, {{tag}} and {{person}}!", ".*?\{\{(!)?(\w+)\}\}.*", "ONE")) />
-    
-  </cffunction>       
-  
-  <cffunction name="reMatchGroupsTest4"> 
-    <cfset template = "" />
-    <cfset expected = "" />     
-    
-    <cfset expectMatches = [ "Ready {{##set}}set{{/set}}go!", "##", "set", "set"] />
-    <cfset assertEquals(expectMatches, reMatchGroups("Ready {{##set}}set{{/set}}go!", ".*?\{\{(##)(\w+)}}(.*?)\{\{/\w+\}\}.*", "ONE")) />
-    
-  </cffunction>
+ 
                             
                       
 
