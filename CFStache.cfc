@@ -39,16 +39,22 @@
     <cfargument name="tagName"/>
     <cfargument name="inner"/>           
     <cfargument name="context" />
-    <cfset var ctx = get(tagName, context) />
+    <cfset var ctx = get(tagName, context) /> 
+    <cfset var result = "" />
     <cfif isStruct(ctx)>
-      <cfreturn render(inner, ctx)>
+      <cfreturn render(inner, ctx)>  
+    <cfelseif isQuery(ctx)>         
+      <cfloop query="ctx">
+        <cfset result &= render(inner, ctx) /> <!--- should probably use StringBuilder for performance --->
+      </cfloop>
+      <cfreturn result/>
     <cfelseif ctx>
       <cfreturn inner />
     <cfelse>
       <cfreturn "" />
     </cfif>
-  </cffunction>  
-   
+  </cffunction>          
+                         
   <cffunction name="renderTags">
     <cfargument name="template"/>
     <cfargument name="context" />
@@ -83,8 +89,10 @@
   <cffunction name="get">
     <cfargument name="key" />
     <cfargument name="context"/>
-    <cfif structKeyExists(context, key) >
-      <cfreturn context[key] /> 
+    <cfif isStruct(context) && structKeyExists(context, key) >
+      <cfreturn context[key] />       
+    <cfelseif isQuery(context)>
+      <cfreturn context[key][context.currentrow] />
     <cfelse>
       <cfreturn "" />
     </cfif>

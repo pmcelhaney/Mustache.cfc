@@ -68,9 +68,20 @@
     } />
     <cfset template = "{{##contact}}({{name}}'s number is {{phone}}){{/contact}}">
     <cfset expected = "(Jenny's number is 867-5309)" />
-     
-    
-  </cffunction>        
+  </cffunction>     
+  
+  <cffunction name="queryAsSection">
+    <cfset contacts = queryNew("name,phone")/>
+    <cfset queryAddRow(contacts)>
+    <cfset querySetCell(contacts, "name", "Jenny") />
+    <cfset querySetCell(contacts, "phone", "867-5309") />            
+    <cfset queryAddRow(contacts)>
+    <cfset querySetCell(contacts, "name", "Tom") />
+    <cfset querySetCell(contacts, "phone", "555-1234") />
+    <cfset context = {contacts = contacts} />
+    <cfset template = "{{##contacts}}({{name}}'s number is {{phone}}){{/contacts}}">
+    <cfset expected = "(Jenny's number is 867-5309)(Tom's number is 555-1234)" />
+  </cffunction>   
                       
 
 
