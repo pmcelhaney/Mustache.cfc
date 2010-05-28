@@ -8,7 +8,6 @@
   <cffunction name="render">
     <cfargument name="template"/>
     <cfargument name="context" />                     
-    <cfset variables.context = arguments.context />    
     <cfset template = renderSections(template, context) />  
     <cfreturn renderTags(template, context)/>
   </cffunction>                         
@@ -31,15 +30,16 @@
       <cfset type = matches[2] />
       <cfset tagName = matches[3] />   
       <cfset inner = matches[4] />
-      <cfset template = replace(template, tag, renderSection(tagName, inner))/>
+      <cfset template = replace(template, tag, renderSection(tagName, inner, context))/>
     </cfloop>
     <cfreturn template/>   
   </cffunction>                                                             
   
   <cffunction name="renderSection">      
     <cfargument name="tagName"/>
-    <cfargument name="inner"/>
-    <cfset var ctx = get(tagName) />
+    <cfargument name="inner"/>           
+    <cfargument name="context" />
+    <cfset var ctx = get(tagName, context) />
     <cfif isStruct(ctx)>
       <cfreturn render(inner, ctx)>
     <cfelseif ctx>
@@ -64,23 +64,25 @@
       <cfset tag = matches[1]/>   
       <cfset type = matches[2] />
       <cfset tagName = matches[3] />  
-      <cfset template = replace(template, tag, renderTag(type, tagName))/>  
+      <cfset template = replace(template, tag, renderTag(type, tagName, context))/>  
     </cfloop>
     <cfreturn template/>  
   </cffunction>
   
   <cffunction name="renderTag">    
     <cfargument name="type" /> 
-    <cfargument name="tagName" />   
+    <cfargument name="tagName" /> 
+    <cfargument name="context" />  
     <cfif type eq "!">
       <cfreturn "" />
     <cfelse>
-      <cfreturn get(tagName) & type />
+      <cfreturn get(tagName, context) & type />
     </cfif>
   </cffunction>                      
                                                   
   <cffunction name="get">
     <cfargument name="key" />
+    <cfargument name="context"/>
     <cfif structKeyExists(context, key) >
       <cfreturn context[key] /> 
     <cfelse>
