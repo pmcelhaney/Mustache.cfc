@@ -1,7 +1,7 @@
 <cfcomponent extends="mxunit.framework.TestCase">
                   
   <cffunction name="setup">
-    <cfset stache = createObject("component", "CFStache").init()/>
+    <cfset stache = createObject("component", "Mustache").init()/>
   </cffunction>
                  
   
