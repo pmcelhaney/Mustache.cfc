@@ -99,6 +99,19 @@
     <cfset template = "Hello, {{&thing}}!" />
     <cfset context = { thing = '<b>world</b>'} />   
     <cfset expected = "Hello, <b>world</b>!" />
+  </cffunction>      
+  
+  <cffunction name="ignoreWhitespace">
+    <cfset template = "Hello, {{   thing   }}!" />
+    <cfset context = { thing = 'world'} />   
+    <cfset expected = "Hello, world!" />
+  </cffunction>   
+  
+  
+  <cffunction name="ignoreWhitespaceInSection">
+    <cfset template = "Ready {{##  set  }}set {{/  set  }}go!" />
+    <cfset context =  { set = true }  />     
+    <cfset expected = "Ready set go!" />
   </cffunction>
   
 </cfcomponent>

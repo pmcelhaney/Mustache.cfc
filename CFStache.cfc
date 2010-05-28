@@ -22,7 +22,7 @@
     <cfset var matches = arrayNew(1)  /> 
 
     <cfloop condition = "true" >    
-      <cfset matches = ReFindNoCaseValues(template, "\{\{(##)(\w+)}}(.*?)\{\{/\2\}\}")>
+      <cfset matches = ReFindNoCaseValues(template, "\{\{(##)\s*(\w+)\s*}}(.*?)\{\{/\s*\2\s*\}\}")>
       <cfif arrayLen(matches) eq 0>
         <cfbreak>
       </cfif>
@@ -63,7 +63,7 @@
     <cfset var matches = arrayNew(1) />
     
     <cfloop condition = "true" >    
-      <cfset matches = ReFindNoCaseValues(template, "\{\{(!|\{|&)?(\w+)\}?\}\}") />   
+      <cfset matches = ReFindNoCaseValues(template, "\{\{(!|\{|&)?\s*(\w+)\s*\}?\}\}") />   
       <cfif arrayLen(matches) eq 0>
         <cfbreak>
       </cfif>
