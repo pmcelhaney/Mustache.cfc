@@ -19,7 +19,7 @@
     <cfset var tagName = ""/>                    
     <cfset var type = "" />
     <cfset var inner = "" />
-    <cfset var re = ".*?(\{\{(##)(\w+)}}(.*?)\{\{/\w+\}\}).*" />       
+    <cfset var re = ".*?(\{\{(##)(\w+)}}(.*?)\{\{/\3\}\}).*" />       
     <cfset  matches = ReFindNoCaseValues(template, re) />  
     <cfset variables.context = arguments.context />   
     <cfloop condition = "arraylen(matches) eq 5" >
