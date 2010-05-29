@@ -124,7 +124,15 @@
     <cfset template = "Ready {{##  set  }}set {{/  set  }}go!" />
     <cfset context =  { set = true }  />     
     <cfset expected = "Ready set go!" />
-  </cffunction>    
+  </cffunction> 
+
+  <cffunction name="callAFunction">
+  	<cfset context = createObject("component", "Person")/>   
+		<cfset context.firstname = "Chris" />
+		<cfset context.lastname = "Wanstrath" />       
+	  <cfset template = "Mustache was created by {{fullname}}." /> 
+		<cfset expected = "Mustache was created by Chris Wanstrath." />
+  </cffunction>
   
   
   

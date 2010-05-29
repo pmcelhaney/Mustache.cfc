@@ -93,7 +93,11 @@
     <cfargument name="key" />
     <cfargument name="context"/>
     <cfif isStruct(context) && structKeyExists(context, key) >
-      <cfreturn context[key] />       
+      <cfif isSimpleValue(context[key]) or isStruct(context[key]) or isQuery(context[key])> 
+      	<cfreturn context[key]/>
+      <cfelse>              
+	      <cfreturn evaluate("context.#key#()")>
+      </cfif>      
     <cfelseif isQuery(context)>
       <cfreturn context[key][context.currentrow] />
     <cfelse>
