@@ -134,7 +134,11 @@
 		<cfset expected = "Mustache was created by Chris Wanstrath." />
   </cffunction>
   
-  
+  <cffunction name="filter">        
+  	<cfset context = createObject("component", "Filter")/>       
+	  <cfset template = "Hello, {{##bold}}world{{/bold}}." /> 
+		<cfset expected = "Hello, <b>world</b>." />
+  </cffunction>
   
   
 </cfcomponent>

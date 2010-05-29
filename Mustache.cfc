@@ -49,6 +49,8 @@
         <cfset result &= render(inner, ctx) /> <!--- should probably use StringBuilder for performance --->
       </cfloop>
       <cfreturn result/>
+    <cfelseif not isSimpleValue(context[tagName])>
+			<cfreturn evaluate("context.#tagName#(inner)") />
     <cfelseif ctx xor type eq "^">
       <cfreturn inner />
     <cfelse>
@@ -96,7 +98,7 @@
       <cfif isSimpleValue(context[key]) or isStruct(context[key]) or isQuery(context[key])> 
       	<cfreturn context[key]/>
       <cfelse>              
-	      <cfreturn evaluate("context.#key#()")>
+	      <cfreturn evaluate("context.#key#('')")>
       </cfif>      
     <cfelseif isQuery(context)>
       <cfreturn context[key][context.currentrow] />
