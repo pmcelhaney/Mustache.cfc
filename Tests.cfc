@@ -89,6 +89,17 @@
     <cfset context = {contacts = contacts} />
     <cfset template = "{{##contacts}}({{name}}'s number is {{phone}}){{/contacts}}">
     <cfset expected = "(Jenny's number is 867-5309)(Tom's number is 555-1234)" />
+  </cffunction>  
+  
+  <cffunction name="arrayAsSection">
+    <cfset context = {
+      contacts = [ 
+        { name = 'Jenny', phone = '867-5309'}
+        , { name = 'Tom', phone = '555-1234'}
+      ]
+    } />
+    <cfset template = "{{##contacts}}({{name}}'s number is {{phone}}){{/contacts}}">
+    <cfset expected = "(Jenny's number is 867-5309)(Tom's number is 555-1234)" />
   </cffunction>
   
   <cffunction name="escape">

@@ -41,13 +41,19 @@
     <cfargument name="context"/>
     <cfset var ctx = get(tagName, context) /> 
     <cfset var result = "" />
+    <cfset var item = "" />
     <cfif isStruct(ctx)>
       <cfreturn render(inner, ctx)>
     <cfelseif isQuery(ctx)>
       <cfloop query="ctx">
         <cfset result &= render(inner, ctx) /> <!--- TODO: should probably use StringBuilder for performance --->
       </cfloop>
-      <cfreturn result/>
+      <cfreturn result/>  
+    <cfelseif isArray(ctx)>                                                                                                         
+      <cfloop array="#ctx#" index="item">
+        <cfset result &= render(inner, item) /> <!--- TODO: should probably use StringBuilder for performance --->
+      </cfloop>
+      <cfreturn result />
     <cfelseif isFunction(context[tagName])>
       <cfreturn evaluate("context.#tagName#(inner)") />
     <cfelseif ctx xor type eq "^">
@@ -130,7 +136,7 @@
   <!--- TODO: Find a good way to determine whether an object is a function --->
   <cffunction name="isFunction" access="private" output="false">
     <cfargument name="object" />
-    <cfreturn not (isSimpleValue(object) or isStruct(object) or isQuery(object)) />
+    <cfreturn not (isSimpleValue(object) or isStruct(object) or isQuery(object) or isArray(object)) />
   </cffunction>
   
 </cfcomponent>
