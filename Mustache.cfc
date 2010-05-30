@@ -46,7 +46,7 @@
       <cfreturn renderQuerySection(inner, ctx) />
     <cfelseif isArray(ctx)>                                                                                                         
       <cfreturn renderArraySection(inner, ctx) />
-    <cfelseif isFunction(context[tagName])>
+    <cfelseif isCustomFunction(context[tagName])>
       <cfreturn evaluate("context.#tagName#(inner)") />
     <cfelseif ctx xor type eq "^">
       <cfreturn inner />
@@ -113,7 +113,7 @@
     <cfargument name="key" />
     <cfargument name="context"/>
     <cfif isStruct(context) && structKeyExists(context, key) >
-      <cfif isFunction(context[key])> 
+      <cfif isCustomFunction(context[key])> 
         <cfreturn evaluate("context.#key#('')")>
       <cfelse>
         <cfreturn context[key]/>
@@ -145,12 +145,6 @@
       </cfloop>
     </cfif>
     <cfreturn results />
-  </cffunction>
-  
-  <!--- TODO: Find a good way to determine whether an object is a function --->
-  <cffunction name="isFunction" access="private" output="false">
-    <cfargument name="object" />
-    <cfreturn not (isSimpleValue(object) or isStruct(object) or isQuery(object) or isArray(object)) />
   </cffunction>
   
 </cfcomponent>
