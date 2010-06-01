@@ -22,7 +22,7 @@
     <cfset var matches = arrayNew(1) />
     <cfloop condition = "true" >
       <cfset matches = ReFindNoCaseValues(template, "\{\{(##|\^)\s*(\w+)\s*}}(.*?)\{\{/\s*\2\s*\}\}")>
-      <cfif arrayLen(matches) eq 0>
+      <cfif arrayLen(matches) eq 0>                             
         <cfbreak>
       </cfif>
       <cfset tag = matches[1] />
@@ -84,7 +84,7 @@
     <cfset var tagName = ""/>     
     <cfset var matches = arrayNew(1) />
     <cfloop condition = "true" >    
-      <cfset matches = ReFindNoCaseValues(template, "\{\{(!|\{|&)?\s*(\w+)\s*\}?\}\}") />   
+      <cfset matches = ReFindNoCaseValues(template, "\{\{(!|\{|&|\>)?\s*(\w+).*?\}?\}\}") />   
       <cfif arrayLen(matches) eq 0>
         <cfbreak>
       </cfif>
@@ -104,9 +104,18 @@
       <cfreturn "" />
     <cfelseif type eq "{" or type eq "&">
       <cfreturn get(tagName, context) />
+    <cfelseif type eq ">">
+      <cfreturn render(readMustacheFile(tagName), context) />
     <cfelse>
       <cfreturn htmlEditFormat(get(tagName, context)) />
     </cfif> 
+  </cffunction>          
+  
+  <cffunction name="readMustacheFile" access="private">
+    <cfargument name="filename" />                                   
+    <cfset var template="" />
+    <cffile action="read" file="#getDirectoryFromPath(getCurrentTemplatePath())##filename#.mustache" variable="template"/>
+    <cfreturn template/>
   </cffunction>
   
   <cffunction name="get" access="private" output="false">
