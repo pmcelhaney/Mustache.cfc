@@ -6,8 +6,8 @@
   </cffunction>
   
   <cffunction name="render" output="false">
-    <cfargument name="template"/>
-    <cfargument name="context" />
+    <cfargument name="template" default="#readMustacheFile(getMetaData(this).name)#"/>
+    <cfargument name="context" default="#this#"/>
     <cfset template = renderSections(template, context) />
     <cfreturn renderTags(template, context)/>
   </cffunction>
@@ -111,11 +111,11 @@
     </cfif> 
   </cffunction>          
   
-  <cffunction name="readMustacheFile" access="private">
+  <cffunction name="readMustacheFile" access="private" output="false">
     <cfargument name="filename" />                                   
     <cfset var template="" />
     <cffile action="read" file="#getDirectoryFromPath(getCurrentTemplatePath())##filename#.mustache" variable="template"/>
-    <cfreturn template/>
+    <cfreturn trim(template)/>
   </cffunction>
   
   <cffunction name="get" access="private" output="false">
@@ -138,8 +138,9 @@
     <cfargument name="text"/>
     <cfargument name="re"/>
     <cfset var results = arrayNew(1) />
-    <!--- TODO: Pass in the compiled pattern instead of recompiling every call. --->
-    <cfset var pattern = CreateObject("java","java.util.regex.Pattern").compile(arguments.re) />
+    <!--- TODO: Pass in the compiled pattern instead of recompiling every call. --->            
+    <cfset var DOTALL = 32 />
+    <cfset var pattern = CreateObject("java","java.util.regex.Pattern").compile(arguments.re, DOTALL) />
     <cfset var matcher = pattern.matcher(arguments.text)/>
     <cfset var i = 0 />
     <cfset var nextMatch = "" />
