@@ -1,7 +1,7 @@
 <cfcomponent extends="mxunit.framework.TestCase">
   
   <cffunction name="setup">
-    <cfset stache = createObject("component", "Mustache").init()/>
+    <cfset stache = createObject("component", "mustache.Mustache").init()/>
   </cffunction>
   
   <cffunction name="tearDown">
@@ -146,7 +146,9 @@
     <cfset expected = "Hello, <b>world</b>." />
   </cffunction>
   
-  <cffunction name="partial">
+  <cffunction name="partial">                       
+	  <!--- using a subclass so that it will look for the partial in this directory --->
+		<cfset stache = createObject("component", "Winner").init()/>   
     <cfset context = { word = 'Goodnight', name = 'Gracie' } />
     <cfset template = "<ul><li>Say {{word}}, {{name}}.</li><li>{{> gracie_allen}}</li></ul>" />
     <cfset expected = "<ul><li>Say Goodnight, Gracie.</li><li>Goodnight</li></ul>" />  

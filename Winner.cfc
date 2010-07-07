@@ -1,3 +1,0 @@
-<cfcomponent extends="Mustache">
-  
-</cfcomponent>

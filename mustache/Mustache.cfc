@@ -6,7 +6,7 @@
   </cffunction>
   
   <cffunction name="render" output="false">
-    <cfargument name="template" default="#readMustacheFile(getMetaData(this).name)#"/>
+    <cfargument name="template" default="#readMustacheFile(listRest(getMetaData(this).name, '.'))#"/>
     <cfargument name="context" default="#this#"/>
     <cfset template = renderSections(template, context) />
     <cfreturn renderTags(template, context)/>
@@ -114,8 +114,9 @@
   <cffunction name="readMustacheFile" access="private" output="false">
     <cfargument name="filename" />                                   
     <cfset var template="" />
-    <cffile action="read" file="#getDirectoryFromPath(getCurrentTemplatePath())##filename#.mustache" variable="template"/>
+    <cffile action="read" file="#getDirectoryFromPath(getMetaData(this).path)##filename#.mustache" variable="template"/>   
     <cfreturn trim(template)/>
+		<cfreturn getDirectoryFromPath(getMetaData(this).path) />
   </cffunction>
   
   <cffunction name="get" access="private" output="false">
