@@ -81,6 +81,12 @@
     <cfset template = "Ready {{##set}}set {{/set}}go!" />
     <cfset expected = "Ready set go!" />
   </cffunction>     
+
+	<cffunction name="skipMissingField">
+		<cfset context =  structNew()  />
+    <cfset template = "There's something {{##foo}}missing{{/foo}}!" />
+    <cfset expected = "There's something !" />
+	</cffunction>
   
   <cffunction name="structAsSection">
     <cfset context = {
@@ -101,6 +107,15 @@
     <cfset context = {contacts = contacts} />
     <cfset template = "{{##contacts}}({{name}}'s number is {{phone}}){{/contacts}}">
     <cfset expected = "(Jenny's number is 867-5309)(Tom's number is 555-1234)" />
+  </cffunction>
+
+  <cffunction name="missingQueryColumnIsSkipped">
+    <cfset contacts = queryNew("name")/>
+    <cfset queryAddRow(contacts)>
+    <cfset querySetCell(contacts, "name", "Jenny") />
+    <cfset context = {contacts = contacts} />
+    <cfset template = "{{##contacts}}({{name}}'s number is {{phone}}){{/contacts}}">
+    <cfset expected = "(Jenny's number is )" />
   </cffunction>  
   
   <cffunction name="arrayAsSection">
@@ -112,6 +127,17 @@
     } />
     <cfset template = "{{##contacts}}({{name}}'s number is {{phone}}){{/contacts}}">
     <cfset expected = "(Jenny's number is 867-5309)(Tom's number is 555-1234)" />
+  </cffunction>       
+
+  <cffunction name="missingStructKeyIsSkipped">
+    <cfset context = {
+      contacts = [ 
+        { name = 'Jenny', phone = '867-5309'}
+        , { name = 'Tom'}
+      ]
+    } />
+    <cfset template = "{{##contacts}}({{name}}'s number is {{^phone}}unlisted{{/phone}}{{phone}}){{/contacts}}">
+    <cfset expected = "(Jenny's number is 867-5309)(Tom's number is unlisted)" />
   </cffunction>
   
   <cffunction name="escape">

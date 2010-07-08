@@ -40,13 +40,13 @@
     <cfargument name="inner"/>
     <cfargument name="context"/>
     <cfset var ctx = get(tagName, context) /> 
-    <cfif isStruct(ctx)>
+    <cfif isStruct(ctx)>        
       <cfreturn render(inner, ctx)>
     <cfelseif isQuery(ctx)>
       <cfreturn renderQuerySection(inner, ctx) />
     <cfelseif isArray(ctx)>                                                                                                         
-      <cfreturn renderArraySection(inner, ctx) />
-    <cfelseif isCustomFunction(context[tagName])>
+      <cfreturn renderArraySection(inner, ctx) />   
+    <cfelseif structKeyExists(context, tagName) and isCustomFunction(context[tagName])>
       <cfreturn evaluate("context.#tagName#(inner)") />
     <cfelseif convertToBoolean(ctx) xor type eq "^">
       <cfreturn inner />
@@ -134,11 +134,15 @@
       <cfif isCustomFunction(context[key])> 
         <cfreturn evaluate("context.#key#('')")>
       <cfelse>
-        <cfreturn context[key]/>
+        <cfreturn context[key]/>             
       </cfif>
-    <cfelseif isQuery(context)>
-      <cfreturn context[key][context.currentrow] />
-    <cfelse>
+    <cfelseif isQuery(context)>          
+			<cfif listContainsNoCase(context.columnList, key)>
+      	<cfreturn context[key][context.currentrow] />
+    	<cfelse>   
+				<cfreturn "" />
+	    </cfif>
+		<cfelse>
       <cfreturn "" />
     </cfif>
   </cffunction>
