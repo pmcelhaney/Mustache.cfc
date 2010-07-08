@@ -48,12 +48,20 @@
       <cfreturn renderArraySection(inner, ctx) />
     <cfelseif isCustomFunction(context[tagName])>
       <cfreturn evaluate("context.#tagName#(inner)") />
-    <cfelseif ctx xor type eq "^">
+    <cfelseif convertToBoolean(ctx) xor type eq "^">
       <cfreturn inner />
     <cfelse>
       <cfreturn "" />
     </cfif>
   </cffunction> 
+	
+	<cffunction name="convertToBoolean"> 
+		<cfargument name="value"/>
+		<cfif isBoolean(value)>
+			<cfreturn value />
+		</cfif>   
+		<cfreturn value neq "" />
+	</cffunction>
   
   <cffunction name="renderQuerySection" access="private" output="false">
     <cfargument name="template"/>
