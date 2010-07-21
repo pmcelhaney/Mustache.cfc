@@ -1,6 +1,6 @@
 # Mustache.cfc
 
-Chris Wantrath's [Mustache](http://mustache.github.com/) template engine for ColdFusion.
+Chris Wanstrath's [Mustache](http://mustache.github.com/) templates for ColdFusion.
 
 ## Basic Usage                              
 
