@@ -1,6 +1,6 @@
 # Mustache.cfc
 
-Chris Wanstrath's [Mustache](http://mustache.github.com/) templates for ColdFusion.
+Chris Wanstrath's [Mustache](http://mustache.github.com/) templates for [ColdFusion](https://github.com/pmcelhaney/Mustache.cfc).
 
 ## Basic Usage                              
 
