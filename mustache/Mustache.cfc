@@ -35,7 +35,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	 --->
 
 	<cfset variables.SectionRegEx = CreateObject("java","java.util.regex.Pattern").compile("\{\{(##|\^)\s*(\w+)\s*}}(.*?)\{\{/\s*\2\s*\}\}", 32)>
-	<cfset variables.TagRexEx = CreateObject("java","java.util.regex.Pattern").compile("\{\{(!|\{|&|\>)?\s*(\w+).*?\}?\}\}", 32) />
+	<cfset variables.TagRegEx = CreateObject("java","java.util.regex.Pattern").compile("\{\{(!|\{|&|\>)?\s*(\w+).*?\}?\}\}", 32) />
 
   <cffunction name="init" output="false">
     <cfreturn this />
@@ -131,7 +131,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <cfset var tagName = ""/>     
     <cfset var matches = arrayNew(1) />
     <cfloop condition = "true" >    
-      <cfset matches = ReFindNoCaseValues(template, variables.TagRexEx) />   
+      <cfset matches = ReFindNoCaseValues(template, variables.TagRegEx) />   
       <cfif arrayLen(matches) eq 0>
         <cfbreak>
       </cfif>
