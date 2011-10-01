@@ -30,7 +30,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <cfcomponent>
 
   <cffunction name="init" output="false">
-    <cfset variables.context = {} />
     <cfreturn this />
   </cffunction>
   
