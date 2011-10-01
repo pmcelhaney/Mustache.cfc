@@ -153,7 +153,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <cfset var template="" />
     <cffile action="read" file="#getDirectoryFromPath(getMetaData(this).path)##filename#.mustache" variable="template"/>   
     <cfreturn trim(template)/>
-		<cfreturn getDirectoryFromPath(getMetaData(this).path) />
   </cffunction>
   
   <cffunction name="get" access="private" output="false">
