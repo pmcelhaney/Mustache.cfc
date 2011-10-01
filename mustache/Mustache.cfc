@@ -28,6 +28,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --->
 
 <cfcomponent>
+	
+	<cfset variables.SectionRegEx = CreateObject("java","java.util.regex.Pattern").compile("\{\{(##|\^)\s*(\w+)\s*}}(.*?)\{\{/\s*\2\s*\}\}", 32)>
+	<cfset variables.TagRexEx = CreateObject("java","java.util.regex.Pattern").compile("\{\{(!|\{|&|\>)?\s*(\w+).*?\}?\}\}", 32) />
 
   <cffunction name="init" output="false">
     <cfreturn this />
@@ -49,7 +52,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <cfset var inner = "" />
     <cfset var matches = arrayNew(1) />
     <cfloop condition = "true" >
-      <cfset matches = ReFindNoCaseValues(template, "\{\{(##|\^)\s*(\w+)\s*}}(.*?)\{\{/\s*\2\s*\}\}")>
+      <cfset matches = ReFindNoCaseValues(template, variables.SectionRegEx)>
       <cfif arrayLen(matches) eq 0>                             
         <cfbreak>
       </cfif>
@@ -123,7 +126,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <cfset var tagName = ""/>     
     <cfset var matches = arrayNew(1) />
     <cfloop condition = "true" >    
-      <cfset matches = ReFindNoCaseValues(template, "\{\{(!|\{|&|\>)?\s*(\w+).*?\}?\}\}") />   
+      <cfset matches = ReFindNoCaseValues(template, variables.TagRexEx) />   
       <cfif arrayLen(matches) eq 0>
         <cfbreak>
       </cfif>
@@ -181,10 +184,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <cfargument name="text"/>
     <cfargument name="re"/>
     <cfset var results = arrayNew(1) />
-    <!--- TODO: Pass in the compiled pattern instead of recompiling every call. --->            
-    <cfset var DOTALL = 32 />
-    <cfset var pattern = CreateObject("java","java.util.regex.Pattern").compile(arguments.re, DOTALL) />
-    <cfset var matcher = pattern.matcher(arguments.text)/>
+    <cfset var matcher = arguments.re.matcher(arguments.text)/>
     <cfset var i = 0 />
     <cfset var nextMatch = "" />
     <cfif matcher.Find()>
