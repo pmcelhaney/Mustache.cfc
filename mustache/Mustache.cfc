@@ -63,33 +63,36 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <cfreturn template/>
   </cffunction>                                                             
   
-  <cffunction name="renderSection" access="private" output="false">
-    <cfargument name="tagName"/>
-    <cfargument name="type"/>
-    <cfargument name="inner"/>
-    <cfargument name="context"/>
-    <cfset var ctx = get(tagName, context) /> 
-    <cfif isStruct(ctx)>        
-      <cfreturn render(inner, ctx)>
-    <cfelseif isQuery(ctx)>
-      <cfreturn renderQuerySection(inner, ctx) />
-    <cfelseif isArray(ctx)>                                                                                                         
-      <cfreturn renderArraySection(inner, ctx) />   
-    <cfelseif structKeyExists(context, tagName) and isCustomFunction(context[tagName])>
-      <cfreturn evaluate("context.#tagName#(inner)") />
-    <cfelseif convertToBoolean(ctx) xor type eq "^">
-      <cfreturn inner />
-    <cfelse>
-      <cfreturn "" />
-    </cfif>
-  </cffunction> 
+	<cffunction name="renderSection" access="private" output="false">
+		<cfargument name="tagName"/>
+		<cfargument name="type"/>
+		<cfargument name="inner"/>
+		<cfargument name="context"/>
+		<cfset var ctx = get(arguments.tagName, context) /> 
+		<cfif isStruct(ctx) and !StructIsEmpty(ctx)>
+			<cfreturn render(arguments.inner, ctx) />
+		<cfelseif isQuery(ctx) AND ctx.recordCount>
+			<cfreturn renderQuerySection(arguments.inner, ctx) />
+		<cfelseif isArray(ctx) and !ArrayIsEmpty(ctx)>
+			<cfreturn renderArraySection(arguments.inner, ctx) />
+		<cfelseif structKeyExists(arguments.context, arguments.tagName) and isCustomFunction(arguments.context[arguments.tagName])>
+			<cfreturn evaluate("context.#tagName#(inner)") />
+		</cfif>
+		<cfif convertToBoolean(ctx) xor arguments.type eq "^">
+			<cfreturn inner />
+		</cfif>
+		<cfreturn "" />
+	</cffunction> 
 	
 	<cffunction name="convertToBoolean"> 
 		<cfargument name="value"/>
 		<cfif isBoolean(value)>
 			<cfreturn value />
-		</cfif>   
-		<cfreturn value neq "" />
+		</cfif>
+		<cfif IsSimpleValue(value)>
+			<cfreturn value neq "" />
+		</cfif>
+		<cfreturn false>
 	</cffunction>
   
   <cffunction name="renderQuerySection" access="private" output="false">

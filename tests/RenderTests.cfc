@@ -74,7 +74,25 @@
     <cfset context =  { set = "" }  />
     <cfset template = "Ready {{##set}}set {{/set}}go!" />
     <cfset expected = "Ready go!" />
-  </cffunction>       
+  </cffunction>
+
+  <cffunction name="emptyQueriesAreFalse">
+    <cfset context =  { set = QueryNew('firstname,lastname') }  />
+    <cfset template = "Ready {{##set}}No records found{{/set}}go!" />
+     <cfset expected = "Ready go!" />
+  </cffunction>
+
+  <cffunction name="emptyStructsAreFalse">
+    <cfset context =  { set = {} } />
+     <cfset template = "Ready {{##set}}No records found{{/set}}go!" />
+     <cfset expected = "Ready go!" />
+  </cffunction>
+
+  <cffunction name="emptyArraysAreFalse">
+    <cfset context =  { set = [] }  />
+     <cfset template = "Ready {{##set}}No records found{{/set}}go!" />
+     <cfset expected = "Ready go!" />
+  </cffunction>
                                               
 	<cffunction name="nonEmptyStringsAreTrue">
     <cfset context =  { set = "x" }  />
