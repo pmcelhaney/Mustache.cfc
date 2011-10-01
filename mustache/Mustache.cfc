@@ -28,14 +28,21 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --->
 
 <cfcomponent>
+	
+	<!--- 
+	reference for string building
+	http://www.aliaspooryorik.com/blog/index.cfm/e/posts.details/post/string-concatenation-performance-test-128
+	 --->
+
+	<cfset variables.SectionRegEx = CreateObject("java","java.util.regex.Pattern").compile("\{\{(##|\^)\s*(\w+)\s*}}(.*?)\{\{/\s*\2\s*\}\}", 32)>
+	<cfset variables.TagRegEx = CreateObject("java","java.util.regex.Pattern").compile("\{\{(!|\{|&|\>)?\s*(\w+).*?\}?\}\}", 32) />
 
   <cffunction name="init" output="false">
-    <cfset variables.context = {} />
     <cfreturn this />
   </cffunction>
   
   <cffunction name="render" output="false">
-    <cfargument name="template" default="#readMustacheFile(listRest(getMetaData(this).name, '.'))#"/>
+    <cfargument name="template" default="#readMustacheFile(ListLast(getMetaData(this).name, '.'))#"/>
     <cfargument name="context" default="#this#"/>
     <cfset template = renderSections(template, context) />
     <cfreturn renderTags(template, context)/>
@@ -50,7 +57,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <cfset var inner = "" />
     <cfset var matches = arrayNew(1) />
     <cfloop condition = "true" >
-      <cfset matches = ReFindNoCaseValues(template, "\{\{(##|\^)\s*(\w+)\s*}}(.*?)\{\{/\s*\2\s*\}\}")>
+      <cfset matches = ReFindNoCaseValues(template, variables.SectionRegEx)>
       <cfif arrayLen(matches) eq 0>                             
         <cfbreak>
       </cfif>
@@ -63,54 +70,57 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <cfreturn template/>
   </cffunction>                                                             
   
-  <cffunction name="renderSection" access="private" output="false">
-    <cfargument name="tagName"/>
-    <cfargument name="type"/>
-    <cfargument name="inner"/>
-    <cfargument name="context"/>
-    <cfset var ctx = get(tagName, context) /> 
-    <cfif isStruct(ctx)>        
-      <cfreturn render(inner, ctx)>
-    <cfelseif isQuery(ctx)>
-      <cfreturn renderQuerySection(inner, ctx) />
-    <cfelseif isArray(ctx)>                                                                                                         
-      <cfreturn renderArraySection(inner, ctx) />   
-    <cfelseif structKeyExists(context, tagName) and isCustomFunction(context[tagName])>
-      <cfreturn evaluate("context.#tagName#(inner)") />
-    <cfelseif convertToBoolean(ctx) xor type eq "^">
-      <cfreturn inner />
-    <cfelse>
-      <cfreturn "" />
-    </cfif>
-  </cffunction> 
+	<cffunction name="renderSection" access="private" output="false">
+		<cfargument name="tagName"/>
+		<cfargument name="type"/>
+		<cfargument name="inner"/>
+		<cfargument name="context"/>
+		<cfset var ctx = get(arguments.tagName, context) /> 
+		<cfif isStruct(ctx) and !StructIsEmpty(ctx)>
+			<cfreturn render(arguments.inner, ctx) />
+		<cfelseif isQuery(ctx) AND ctx.recordCount>
+			<cfreturn renderQuerySection(arguments.inner, ctx) />
+		<cfelseif isArray(ctx) and !ArrayIsEmpty(ctx)>
+			<cfreturn renderArraySection(arguments.inner, ctx) />
+		<cfelseif structKeyExists(arguments.context, arguments.tagName) and isCustomFunction(arguments.context[arguments.tagName])>
+			<cfreturn evaluate("context.#tagName#(inner)") />
+		</cfif>
+		<cfif convertToBoolean(ctx) xor arguments.type eq "^">
+			<cfreturn inner />
+		</cfif>
+		<cfreturn "" />
+	</cffunction> 
 	
 	<cffunction name="convertToBoolean"> 
 		<cfargument name="value"/>
 		<cfif isBoolean(value)>
 			<cfreturn value />
-		</cfif>   
-		<cfreturn value neq "" />
+		</cfif>
+		<cfif IsSimpleValue(value)>
+			<cfreturn value neq "" />
+		</cfif>
+		<cfreturn false>
 	</cffunction>
   
   <cffunction name="renderQuerySection" access="private" output="false">
     <cfargument name="template"/>
     <cfargument name="context"/>
-    <cfset var result = "" />
+    <cfset var result = [] />
     <cfloop query="context">
-      <cfset result &= render(template, context) /> <!--- TODO: should probably use StringBuilder for performance --->
+      <cfset ArrayAppend(result, render(template, context)) />
     </cfloop>
-    <cfreturn result/>
+    <cfreturn ArrayToList(result, "") />
   </cffunction>  
   
   <cffunction name="renderArraySection" access="private" output="false">
     <cfargument name="template"/>
     <cfargument name="context"/>
-    <cfset var result = "" /> 
+    <cfset var result = [] /> 
     <cfset var item = "" />
     <cfloop array="#context#" index="item">
-      <cfset result &= render(template, item) /> <!--- TODO: should probably use StringBuilder for performance --->
+      <cfset ArrayAppend(result, render(template, item)) />
     </cfloop>
-    <cfreturn result/>
+    <cfreturn ArrayToList(result, "") />
   </cffunction>
   
   
@@ -121,7 +131,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <cfset var tagName = ""/>     
     <cfset var matches = arrayNew(1) />
     <cfloop condition = "true" >    
-      <cfset matches = ReFindNoCaseValues(template, "\{\{(!|\{|&|\>)?\s*(\w+).*?\}?\}\}") />   
+      <cfset matches = ReFindNoCaseValues(template, variables.TagRegEx) />   
       <cfif arrayLen(matches) eq 0>
         <cfbreak>
       </cfif>
@@ -153,7 +163,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <cfset var template="" />
     <cffile action="read" file="#getDirectoryFromPath(getMetaData(this).path)##filename#.mustache" variable="template"/>   
     <cfreturn trim(template)/>
-		<cfreturn getDirectoryFromPath(getMetaData(this).path) />
   </cffunction>
   
   <cffunction name="get" access="private" output="false">
@@ -180,10 +189,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <cfargument name="text"/>
     <cfargument name="re"/>
     <cfset var results = arrayNew(1) />
-    <!--- TODO: Pass in the compiled pattern instead of recompiling every call. --->            
-    <cfset var DOTALL = 32 />
-    <cfset var pattern = CreateObject("java","java.util.regex.Pattern").compile(arguments.re, DOTALL) />
-    <cfset var matcher = pattern.matcher(arguments.text)/>
+    <cfset var matcher = arguments.re.matcher(arguments.text)/>
     <cfset var i = 0 />
     <cfset var nextMatch = "" />
     <cfif matcher.Find()>
