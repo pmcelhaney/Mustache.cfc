@@ -29,6 +29,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 <cfcomponent>
 	
+	<!--- 
+	reference for string building
+	http://www.aliaspooryorik.com/blog/index.cfm/e/posts.details/post/string-concatenation-performance-test-128
+	 --->
+
 	<cfset variables.SectionRegEx = CreateObject("java","java.util.regex.Pattern").compile("\{\{(##|\^)\s*(\w+)\s*}}(.*?)\{\{/\s*\2\s*\}\}", 32)>
 	<cfset variables.TagRexEx = CreateObject("java","java.util.regex.Pattern").compile("\{\{(!|\{|&|\>)?\s*(\w+).*?\}?\}\}", 32) />
 
@@ -100,22 +105,22 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   <cffunction name="renderQuerySection" access="private" output="false">
     <cfargument name="template"/>
     <cfargument name="context"/>
-    <cfset var result = "" />
+    <cfset var result = [] />
     <cfloop query="context">
-      <cfset result &= render(template, context) /> <!--- TODO: should probably use StringBuilder for performance --->
+      <cfset ArrayAppend(result, render(template, context)) />
     </cfloop>
-    <cfreturn result/>
+    <cfreturn ArrayToList(result, "") />
   </cffunction>  
   
   <cffunction name="renderArraySection" access="private" output="false">
     <cfargument name="template"/>
     <cfargument name="context"/>
-    <cfset var result = "" /> 
+    <cfset var result = [] /> 
     <cfset var item = "" />
     <cfloop array="#context#" index="item">
-      <cfset result &= render(template, item) /> <!--- TODO: should probably use StringBuilder for performance --->
+      <cfset ArrayAppend(result, render(template, item)) />
     </cfloop>
-    <cfreturn result/>
+    <cfreturn ArrayToList(result, "") />
   </cffunction>
   
   
