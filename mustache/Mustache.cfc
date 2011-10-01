@@ -35,7 +35,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   </cffunction>
   
   <cffunction name="render" output="false">
-    <cfargument name="template" default="#readMustacheFile(listRest(getMetaData(this).name, '.'))#"/>
+    <cfargument name="template" default="#readMustacheFile(ListLast(getMetaData(this).name, '.'))#"/>
     <cfargument name="context" default="#this#"/>
     <cfset template = renderSections(template, context) />
     <cfreturn renderTags(template, context)/>
