@@ -1,6 +1,6 @@
 <cfcomponent>
 
-	<cffunction name="bold" > 
+	<cffunction name="bold" >
 		<cfargument name="text">
 	  <cfreturn "<b>#text#</b>" />
 	</cffunction>
