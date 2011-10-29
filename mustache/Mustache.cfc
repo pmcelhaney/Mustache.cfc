@@ -1,6 +1,6 @@
-<!--- 
+<!---
 Mustache.cfc
-https://github.com/pmcelhaney/Mustache.cfc 
+https://github.com/pmcelhaney/Mustache.cfc
 
 The MIT License
 
@@ -14,10 +14,10 @@ without limitation the rights to use, copy, modify, merge, publish,
 distribute, sublicense, and/or sell copies of the Software, and to
 permit persons to whom the Software is furnished to do so, subject to
 the following conditions:
- 
+
 The above copyright notice and this permission notice shall be
 included in all copies or substantial portions of the Software.
- 
+
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -28,8 +28,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --->
 
 <cfcomponent>
-	
-	<!--- 
+
+	<!---
 	reference for string building
 	http://www.aliaspooryorik.com/blog/index.cfm/e/posts.details/post/string-concatenation-performance-test-128
 	 --->
@@ -40,25 +40,25 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   <cffunction name="init" output="false">
     <cfreturn this />
   </cffunction>
-  
+
   <cffunction name="render" output="false">
     <cfargument name="template" default="#readMustacheFile(ListLast(getMetaData(this).name, '.'))#"/>
     <cfargument name="context" default="#this#"/>
     <cfset template = renderSections(template, context) />
     <cfreturn renderTags(template, context)/>
   </cffunction>
-  
+
   <cffunction name="renderSections" access="private" output="false">
     <cfargument name="template" />
     <cfargument name="context" />
     <cfset var tag = ""/>
-    <cfset var tagName = ""/>                    
+    <cfset var tagName = ""/>
     <cfset var type = "" />
     <cfset var inner = "" />
     <cfset var matches = arrayNew(1) />
     <cfloop condition = "true" >
       <cfset matches = ReFindNoCaseValues(template, variables.SectionRegEx)>
-      <cfif arrayLen(matches) eq 0>                             
+      <cfif arrayLen(matches) eq 0>
         <cfbreak>
       </cfif>
       <cfset tag = matches[1] />
@@ -68,14 +68,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       <cfset template = replace(template, tag, renderSection(tagName, type, inner, context))/>
     </cfloop>
     <cfreturn template/>
-  </cffunction>                                                             
-  
+  </cffunction>
+
 	<cffunction name="renderSection" access="private" output="false">
 		<cfargument name="tagName"/>
 		<cfargument name="type"/>
 		<cfargument name="inner"/>
 		<cfargument name="context"/>
-		<cfset var ctx = get(arguments.tagName, context) /> 
+		<cfset var ctx = get(arguments.tagName, context) />
 		<cfif isStruct(ctx) and !StructIsEmpty(ctx)>
 			<cfreturn render(arguments.inner, ctx) />
 		<cfelseif isQuery(ctx) AND ctx.recordCount>
@@ -89,9 +89,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			<cfreturn inner />
 		</cfif>
 		<cfreturn "" />
-	</cffunction> 
-	
-	<cffunction name="convertToBoolean"> 
+	</cffunction>
+
+	<cffunction name="convertToBoolean">
 		<cfargument name="value"/>
 		<cfif isBoolean(value)>
 			<cfreturn value />
@@ -101,7 +101,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		</cfif>
 		<cfreturn false>
 	</cffunction>
-  
+
   <cffunction name="renderQuerySection" access="private" output="false">
     <cfargument name="template"/>
     <cfargument name="context"/>
@@ -110,39 +110,39 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       <cfset ArrayAppend(result, render(template, context)) />
     </cfloop>
     <cfreturn ArrayToList(result, "") />
-  </cffunction>  
-  
+  </cffunction>
+
   <cffunction name="renderArraySection" access="private" output="false">
     <cfargument name="template"/>
     <cfargument name="context"/>
-    <cfset var result = [] /> 
+    <cfset var result = [] />
     <cfset var item = "" />
     <cfloop array="#context#" index="item">
       <cfset ArrayAppend(result, render(template, item)) />
     </cfloop>
     <cfreturn ArrayToList(result, "") />
   </cffunction>
-  
-  
+
+
   <cffunction name="renderTags" access="private" output="false">
     <cfargument name="template"/>
     <cfargument name="context" />
     <cfset var tag = ""/>
-    <cfset var tagName = ""/>     
+    <cfset var tagName = ""/>
     <cfset var matches = arrayNew(1) />
-    <cfloop condition = "true" >    
-      <cfset matches = ReFindNoCaseValues(template, variables.TagRegEx) />   
+    <cfloop condition = "true" >
+      <cfset matches = ReFindNoCaseValues(template, variables.TagRegEx) />
       <cfif arrayLen(matches) eq 0>
         <cfbreak>
       </cfif>
       <cfset tag = matches[1]/>
       <cfset type = matches[2] />
       <cfset tagName = matches[3] />
-      <cfset template = replace(template, tag, renderTag(type, tagName, context))/>  
+      <cfset template = replace(template, tag, renderTag(type, tagName, context))/>
     </cfloop>
-    <cfreturn template/> 
+    <cfreturn template/>
   </cffunction>
-  
+
   <cffunction name="renderTag" access="private" output="false">
     <cfargument name="type" />
     <cfargument name="tagName" />
@@ -155,36 +155,36 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       <cfreturn render(readMustacheFile(tagName), context) />
     <cfelse>
       <cfreturn htmlEditFormat(get(tagName, context)) />
-    </cfif> 
-  </cffunction>          
-  
+    </cfif>
+  </cffunction>
+
   <cffunction name="readMustacheFile" access="private" output="false">
-    <cfargument name="filename" />                                   
+    <cfargument name="filename" />
     <cfset var template="" />
-    <cffile action="read" file="#getDirectoryFromPath(getMetaData(this).path)##filename#.mustache" variable="template"/>   
+    <cffile action="read" file="#getDirectoryFromPath(getMetaData(this).path)##filename#.mustache" variable="template"/>
     <cfreturn trim(template)/>
   </cffunction>
-  
+
   <cffunction name="get" access="private" output="false">
     <cfargument name="key" />
     <cfargument name="context"/>
     <cfif isStruct(context) && structKeyExists(context, key) >
-      <cfif isCustomFunction(context[key])> 
+      <cfif isCustomFunction(context[key])>
         <cfreturn evaluate("context.#key#('')")>
       <cfelse>
-        <cfreturn context[key]/>             
+        <cfreturn context[key]/>
       </cfif>
-    <cfelseif isQuery(context)>          
+    <cfelseif isQuery(context)>
 			<cfif listContainsNoCase(context.columnList, key)>
       	<cfreturn context[key][context.currentrow] />
-    	<cfelse>   
+    	<cfelse>
 				<cfreturn "" />
 	    </cfif>
 		<cfelse>
       <cfreturn "" />
     </cfif>
   </cffunction>
-  
+
   <cffunction name="ReFindNoCaseValues" access="private" output="false">
     <cfargument name="text"/>
     <cfargument name="re"/>
@@ -204,5 +204,5 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     </cfif>
     <cfreturn results />
   </cffunction>
-  
+
 </cfcomponent>
