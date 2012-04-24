@@ -35,7 +35,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	 --->
 
 	<cfset variables.SectionRegEx = CreateObject("java","java.util.regex.Pattern").compile("\{\{(##|\^)\s*(\w+)\s*}}(.*?)\{\{/\s*\2\s*\}\}", 32)>
-	<cfset variables.TagRegEx = CreateObject("java","java.util.regex.Pattern").compile("\{\{(!|\{|&|\>)?\s*(\w+).*?\}?\}\}", 32) />
+    <cfset variables.TagRegEx = CreateObject("java","java.util.regex.Pattern").compile("\{\{(!|\{|&|\>)?\s*([\w\.]+).*?\}?\}\}", 32) />
+
 
   <cffunction name="init" output="false">
     <cfreturn this />
@@ -65,7 +66,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       <cfset type = matches[2] />
       <cfset tagName = matches[3] />
       <cfset inner = matches[4] />
+   
       <cfset template = replace(template, tag, renderSection(tagName, type, inner, context))/>
+          
     </cfloop>
     <cfreturn template/>
   </cffunction>
@@ -76,6 +79,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		<cfargument name="inner"/>
 		<cfargument name="context"/>
 		<cfset var ctx = get(arguments.tagName, context) />
+    
 		<cfif isStruct(ctx) and !StructIsEmpty(ctx)>
 			<cfreturn render(arguments.inner, ctx) />
 		<cfelseif isQuery(ctx) AND ctx.recordCount>
@@ -114,9 +118,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
   <cffunction name="renderArraySection" access="private" output="false">
     <cfargument name="template"/>
-    <cfargument name="context"/>
+    <cfargument name="context"/> 
     <cfset var result = [] />
     <cfset var item = "" />
+    
     <cfloop array="#context#" index="item">
       <cfset ArrayAppend(result, render(template, item)) />
     </cfloop>
@@ -147,6 +152,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     <cfargument name="type" />
     <cfargument name="tagName" />
     <cfargument name="context" />
+                 
     <cfif type eq "!">
       <cfreturn "" />
     <cfelseif type eq "{" or type eq "&">
@@ -168,7 +174,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   <cffunction name="get" access="private" output="false">
     <cfargument name="key" />
     <cfargument name="context"/>
-    <cfif isStruct(context) && structKeyExists(context, key) >
+    
+    <cfif key EQ ".">
+        <cfreturn ToString(context)>
+    <cfelseif isStruct(context) && structKeyExists(context, key) >
       <cfif isCustomFunction(context[key])>
         <cfreturn evaluate("context.#key#('')")>
       <cfelse>
@@ -181,7 +190,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				<cfreturn "" />
 	    </cfif>
 		<cfelse>
-      <cfreturn "" />
+      <cfreturn "" />     
     </cfif>
   </cffunction>
 
