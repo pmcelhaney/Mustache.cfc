@@ -95,7 +95,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		<cfreturn "" />
 	</cffunction>
 
-	<cffunction name="convertToBoolean">
+	<cffunction name="convertToBoolean" output="false">
 		<cfargument name="value"/>
 		<cfif isBoolean(value)>
 			<cfreturn value />
@@ -174,23 +174,23 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   <cffunction name="get" access="private" output="false">
     <cfargument name="key" />
     <cfargument name="context"/>
-    
-    <cfif key EQ ".">
-        <cfreturn ToString(context)>
-    <cfelseif isStruct(context) && structKeyExists(context, key) >
+      
+    <cfif isStruct(context) && structKeyExists(context, key) >
       <cfif isCustomFunction(context[key])>
         <cfreturn evaluate("context.#key#('')")>
       <cfelse>
         <cfreturn context[key]/>
       </cfif>
     <cfelseif isQuery(context)>
-			<cfif listContainsNoCase(context.columnList, key)>
-      	<cfreturn context[key][context.currentrow] />
+		<cfif listContainsNoCase(context.columnList, key)>
+      		<cfreturn context[key][context.currentrow] />
     	<cfelse>
-				<cfreturn "" />
+			<cfreturn "" />
 	    </cfif>
-		<cfelse>
-      <cfreturn "" />     
+    <cfelseif (NOT isArray(context)) AND key EQ ".">
+    	<cfreturn ToString(context)>
+	<cfelse>
+      <cfreturn "" />         
     </cfif>
   </cffunction>
 
